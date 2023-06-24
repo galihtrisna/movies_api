@@ -1,7 +1,8 @@
 require("dotenv").config();
 const axios = require("axios");
 const cheerio = require("cheerio");
-const db = process.env.SERVER_URL;
+const db = process.env.MOVIE_DATABASE_URL;
+const imagedb = process.env.IMAGE_DATABASE_URL;
 
 exports.cinema = async () => {
   try {
@@ -40,7 +41,6 @@ exports.cinema = async () => {
 
       currentPage++;
     }
-    
 
     return movies;
   } catch (error) {
@@ -57,9 +57,19 @@ exports.movieDetail = async (title) => {
     const titleWithCite = $("header.post-header > h1").text();
     movie.judulFilm = titleWithCite.replace(/(LK21 Nonton | Film Subtitle Indonesia Streaming Movie Download Gratis Online)/gi, "").trim();
     movie.kualitas = $('h2:contains("Kualitas") + h3 > a').text().trim();
-    movie.negara = $('h2:contains("Negara") + h3 > a').text().trim();
-    movie.bintangFilm = $('h2:contains("Bintang film") + h3 > a').text().trim();
-    movie.sutradara = $('h2:contains("Sutradara") + h3 > a').text().trim();
+    movie.negara = $('h2:contains("Negara") + h3 > a')
+      .map((index, element) => $(element).text().trim())
+      .get();
+    movie.bintangFilm = $("h2:contains('Bintang film')")
+      .closest("div")
+      .find("a")
+      .map((index, element) => $(element).text())
+      .get();
+    movie.sutradara = $("h2:contains('Sutradara')")
+      .closest("div")
+      .find("a")
+      .map((index, element) => $(element).text())
+      .get();
     movie.genre = $('h2:contains("Genre") + h3 > a')
       .map((index, element) => $(element).text().trim())
       .get();
@@ -71,7 +81,11 @@ exports.movieDetail = async (title) => {
     movie.penerjemah = $('h2:contains("Penerjemah") + h3 > a').text().trim();
     movie.sinopsis = $("blockquote").html().trim();
     movie.durasi = $('h2:contains("Durasi") + h3').text().trim();
-    movie.linkEmbed = $("iframe").attr("src");
+    // movie.linkEmbed = $("iframe").attr("src");
+    movie.linkEmbed = $("#loadProviders")
+      .find("a")
+      .map((index, element) => $(element).attr("href"))
+      .get();
     const linkTrailers = $('a[rel="nofollow"][href^="https://www.youtube.com/watch?v="]').attr("href");
     movie.linkTrailer = linkTrailers.replace("https://www.youtube.com/watch?v=", "https://www.youtube.com/embed/");
     movie.linkDownload = $('a[href^="http://dl.makimbo.xyz/"]').attr("href");
@@ -80,7 +94,6 @@ exports.movieDetail = async (title) => {
     throw error;
   }
 };
-
 
 exports.movieOrderBy = async (data) => {
   try {
@@ -112,7 +125,6 @@ exports.movieOrderBy = async (data) => {
     throw error;
   }
 };
-
 
 exports.movieSortBy = async (data) => {
   try {
