@@ -10,7 +10,7 @@ exports.getAll = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      message: "Error: " + error.message,
+      message: error.message,
       data: null,
     });
   }

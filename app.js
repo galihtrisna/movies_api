@@ -4,7 +4,11 @@ const port = 8081;
 const cors = require("cors");
 const cinemaRoute = require("./router/cinema");
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Tentukan asal yang diizinkan
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
