@@ -6,7 +6,7 @@ const imagedb = process.env.IMAGE_DATABASE_URL;
 
 exports.cinema = async () => {
   try {
-    const url = `${db}/latest`;
+    const url = `${db}`;
     const response = await axios.get(url);
     const $ = cheerio.load(response.data);
 
@@ -15,7 +15,7 @@ exports.cinema = async () => {
     let currentPage = 1;
     let totalPages = 2;
     while (currentPage <= totalPages) {
-      const response = await axios.get(`${url}/${currentPage}`);
+      const response = await axios.get(`${url}/page/${currentPage}`);
       const $ = cheerio.load(response.data);
 
       $("article.mega-item").each((index, element) => {
