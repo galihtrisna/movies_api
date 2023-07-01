@@ -15,7 +15,7 @@ exports.cinema = async () => {
     let currentPage = 1;
     let totalPages = 2;
     while (currentPage <= totalPages) {
-      const response = await axios.get(`https://${url}/page/${currentPage}`);
+      const response = await axios.get(`${url}/page/${currentPage}`);
       const $ = cheerio.load(response.data);
 
       $("article.mega-item").each((index, element) => {
