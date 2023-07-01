@@ -121,7 +121,7 @@ exports.movieSearch = async (data) => {
 
 exports.movieSearchInstant = async (data) => {
   try {
-    const url = `https://${db}/?s=${data.keyword}`;
+    const url = `https://search.${db}/?s=${data.keyword}`;
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
