@@ -2,7 +2,7 @@ require("dotenv").config();
 const axios = require("axios");
 const cheerio = require("cheerio");
 const db = process.env.MOVIE_DATABASE_URL;
-const imagedb = process.env.IMAGE_DATABASE_URL;
+const replaceUrl = new RegExp(`(https:\/\/makimbo\.xyz\/|\/)`, "gi");
 
 exports.cinema = async () => {
   try {
@@ -28,7 +28,7 @@ exports.cinema = async () => {
           .get();
         const image = $(element).find("figure.grid-poster > a > img").attr("src");
         const detailUrlWithSc = $(element).find("h1.grid-title > a").attr("href");
-        const detailUrl = detailUrlWithSc.replace(/(https:\/\/lk21official\.homes\/|\/)/gi, "").trim();
+        const detailUrl = detailUrlWithSc.replace(replaceUrl, "").trim();
         const country = $(element).find('.grid-categories > a[rel="category"][href^="/country/"]').text();
         const quality = $(element).find(".grid-meta .quality").text();
         const rating = $(element).find(".rating").text();
@@ -95,6 +95,41 @@ exports.movieDetail = async (title) => {
   }
 };
 
+exports.movieSearch = async (data) => {
+  try {
+    const url = `${db}/search.php?s=${data.keyword}`;
+    const response = await axios.get(url);
+    const $ = cheerio.load(response.data);
+    const movies = [];
+    $("div.search-item > div.row").each((index, element) => {
+      const title = $(element).find('h2 > a[rel="bookmark"]').attr("title");
+      const sutradaraNo = $(element).find('p:has(strong:contains("Sutradara:"))').text();
+      const sutradara = sutradaraNo.replace("Sutradara: ", "");
+      const bintangNo = $(element).find('p:has(strong:contains("Bintang:"))').text();
+      const bintang = bintangNo.replace("Bintang: ", "");
+      const imageNo = $(element).find("img.img-thumbnail").attr("src");
+      const image = `${db}/${imageNo}`;
+      const urlDetail = $(element).find('a:contains("Nonton Movie »")').attr("href");
+      const movie = { title, sutradara, bintang, image, urlDetail };
+      movies.push(movie);
+    });
+    return movies;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.movieSearchInstant = async (data) => {
+  try {
+    const url = `https://search.makimbo.xyz/?s=${data.keyword}`;
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
 exports.movieOrderBy = async (data) => {
   try {
     const url = `${db}/${data.orderby}/page/${data.pagination}`;
@@ -111,7 +146,7 @@ exports.movieOrderBy = async (data) => {
         .get();
       const image = $(element).find("figure.grid-poster > a > img").attr("src");
       const detailUrlWithSc = $(element).find("h1.grid-title > a").attr("href");
-      const detailUrl = detailUrlWithSc.replace(/(https:\/\/lk21official\.homes\/|\/)/gi, "").trim();
+      const detailUrl = detailUrlWithSc.replace(replaceUrl, "").trim();
       const country = $(element).find('.grid-categories > a[rel="category"][href^="/country/"]').text();
       const quality = $(element).find(".grid-meta .quality").text();
       const rating = $(element).find(".rating").text();
@@ -142,7 +177,7 @@ exports.movieSortBy = async (data) => {
         .get();
       const image = $(element).find("figure.grid-poster > a > img").attr("src");
       const detailUrlWithSc = $(element).find("h1.grid-title > a").attr("href");
-      const detailUrl = detailUrlWithSc.replace(/(https:\/\/lk21official\.homes\/|\/)/gi, "").trim();
+      const detailUrl = detailUrlWithSc.replace(replaceUrl, "").trim();
       const country = $(element).find('.grid-categories > a[rel="category"][href^="/country/"]').text();
       const quality = $(element).find(".grid-meta .quality").text();
       const rating = $(element).find(".rating").text();

@@ -35,6 +35,41 @@ exports.getDetail = async (req, res) => {
   }
 };
 
+exports.getSearch = async (req, res) => {
+  try {
+    const data = {
+      keyword: req.params.keyword,
+    };
+    const movies = await cinemaModel.movieSearch(data); // Call model function
+
+    res.json({
+      message: `${data.keyword} has been successfully displayed`,
+      data: movies,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Terjadi kesalahan: " + error.message,
+      data: null,
+    });
+  }
+};
+
+exports.getSearchInstant = async (req, res) => {
+  try {
+    const data = {
+      keyword: req.params.keyword,
+    };
+    const movies = await cinemaModel.movieSearchInstant(data); // Call model function
+
+    res.json(movies);
+  } catch (error) {
+    res.status(500).json({
+      message: "Terjadi kesalahan: " + error.message,
+      data: null,
+    });
+  }
+};
+
 exports.getOrderBy = async (req, res) => {
   try {
     const data = {
