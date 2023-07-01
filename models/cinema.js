@@ -6,7 +6,7 @@ const replaceUrl = new RegExp(`(https:\/\/makimbo\.xyz\/|\/)`, "gi");
 
 exports.cinema = async () => {
   try {
-    const url = `${db}`;
+    const url = `https://${db}`;
     const response = await axios.get(url);
     const $ = cheerio.load(response.data);
 
@@ -15,7 +15,7 @@ exports.cinema = async () => {
     let currentPage = 1;
     let totalPages = 2;
     while (currentPage <= totalPages) {
-      const response = await axios.get(`${url}/page/${currentPage}`);
+      const response = await axios.get(`https://${url}/page/${currentPage}`);
       const $ = cheerio.load(response.data);
 
       $("article.mega-item").each((index, element) => {
@@ -50,7 +50,7 @@ exports.cinema = async () => {
 
 exports.movieDetail = async (title) => {
   try {
-    const url = `${db}/${title.variable}`;
+    const url = `https://${db}/${title.variable}`;
     const response = await axios.get(url);
     const $ = cheerio.load(response.data);
     const movie = {};
@@ -97,7 +97,7 @@ exports.movieDetail = async (title) => {
 
 exports.movieSearch = async (data) => {
   try {
-    const url = `${db}/search.php?s=${data.keyword}`;
+    const url = `https://${db}/search.php?s=${data.keyword}`;
     const response = await axios.get(url);
     const $ = cheerio.load(response.data);
     const movies = [];
@@ -121,7 +121,7 @@ exports.movieSearch = async (data) => {
 
 exports.movieSearchInstant = async (data) => {
   try {
-    const url = `https://search.makimbo.xyz/?s=${data.keyword}`;
+    const url = `https://${db}/?s=${data.keyword}`;
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
@@ -132,7 +132,7 @@ exports.movieSearchInstant = async (data) => {
 
 exports.movieOrderBy = async (data) => {
   try {
-    const url = `${db}/${data.orderby}/page/${data.pagination}`;
+    const url = `https://${db}/${data.orderby}/page/${data.pagination}`;
     const response = await axios.get(url);
     const $ = cheerio.load(response.data);
     const movies = [];
@@ -163,7 +163,7 @@ exports.movieOrderBy = async (data) => {
 
 exports.movieSortBy = async (data) => {
   try {
-    const url = `${db}/${data.sortby}/${data.value}/page/${data.pagination}`;
+    const url = `https://${db}/${data.sortby}/${data.value}/page/${data.pagination}`;
     const response = await axios.get(url);
     const $ = cheerio.load(response.data);
     const movies = [];
