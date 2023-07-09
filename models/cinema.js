@@ -2,7 +2,7 @@ require("dotenv").config();
 const axios = require("axios");
 const cheerio = require("cheerio");
 const db = process.env.MOVIE_DATABASE_URL;
-const replaceUrl = new RegExp(`(https:\/\/makimbo\.xyz\/|\/)`, "gi");
+const replaceUrl = new RegExp(`(https:\/\/tv\.lk21official\.pro\/|\/)`, "gi");
 
 exports.cinema = async () => {
   try {
@@ -27,6 +27,10 @@ exports.cinema = async () => {
           .map((index, elem) => $(elem).text())
           .get();
         const image = $(element).find("figure.grid-poster > a > img").attr("src");
+        const trailerUrl = $(element).find('a:contains("TRAILER")').attr("href");
+        const trailer = trailerUrl.replace("https://www.youtube.com/watch?v=", "https://www.youtube.com/embed/");
+        const thumbnailUrl = trailerUrl.replace("https://www.youtube.com/watch?v=", "https://i3.ytimg.com/vi/");
+        const thumbnail = thumbnailUrl + "/maxresdefault.jpg";
         const detailUrlWithSc = $(element).find("h1.grid-title > a").attr("href");
         const detailUrl = detailUrlWithSc.replace(replaceUrl, "").trim();
         const country = $(element).find('.grid-categories > a[rel="category"][href^="/country/"]').text();
@@ -34,8 +38,7 @@ exports.cinema = async () => {
         const rating = $(element).find(".rating").text();
         const size = $(element).find('.grid-categories > a[rel="category"][href^="/size/"]').text();
         const duration = $(element).find(".grid-meta .duration").text();
-
-        const movie = { title, year, genre, image, detailUrl, country, quality, rating, size, duration };
+        const movie = { title, year, genre, image, thumbnail, trailer, detailUrl, country, quality, rating, size, duration };
         movies.push(movie);
       });
 
