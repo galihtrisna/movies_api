@@ -2,7 +2,7 @@ require("dotenv").config();
 const axios = require("axios");
 const cheerio = require("cheerio");
 const db = process.env.MOVIE_DATABASE_URL;
-const replaceUrl = new RegExp(`(https:\/\/tv\.lk21official\.pro\/|\/)`, "gi");
+const replaceUrl = new RegExp(`(https:\/\/s1\.lk21static\.xyz\/|\/)`, "gi");
 
 exports.cinema = async () => {
   try {
